@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LaunchCode
@@ -30,7 +31,6 @@ public class JobData {
      */
     public static ArrayList<String> findAll(String field) {
 
-        // load data, if not already loaded
         loadData();
 
         ArrayList<String> values = new ArrayList<>();
@@ -48,7 +48,6 @@ public class JobData {
 
     public static ArrayList<HashMap<String, String>> findAll() {
 
-        // load data, if not already loaded
         loadData();
 
         return allJobs;
@@ -65,9 +64,9 @@ public class JobData {
      * @param value Value of teh field to search for
      * @return List of all jobs matching the criteria
      */
+
     public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
 
-        // load data, if not already loaded
         loadData();
 
         ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
@@ -83,20 +82,43 @@ public class JobData {
 
         return jobs;
     }
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+
+        loadData();
+
+        ArrayList<HashMap<String, String>> searchJobs = new ArrayList<>();
+
+        for (HashMap<String, String> job : allJobs) {
+
+            for (Map.Entry<String, String> column : row.entrySet()) {
+
+                String key = column.getKey();
+                String stringValue = column.getValue();
+
+                value = value.toLowerCase();
+                key = key.toLowerCase();
+                stringValue = stringValue.toLowerCase();
+
+                if (stringValue.contains(value) || key.contains(value)) {
+                    searchJobs.add(job);
+
+                }
+            }
+        }
+        return searchJobs;
+    }
 
     /**
      * Read in data from a CSV file and store it in a list
      */
     private static void loadData() {
 
-        // Only load data once
         if (isDataLoaded) {
             return;
         }
 
         try {
 
-            // Open the CSV file and set up pull out column header info and records
             Reader in = new FileReader(DATA_FILE);
             CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
             List<CSVRecord> records = parser.getRecords();
@@ -105,7 +127,6 @@ public class JobData {
 
             allJobs = new ArrayList<>();
 
-            // Put the records into a more friendly format
             for (CSVRecord record : records) {
                 HashMap<String, String> newJob = new HashMap<>();
 
@@ -116,7 +137,6 @@ public class JobData {
                 allJobs.add(newJob);
             }
 
-            // flag the data as loaded, so we don't do it twice
             isDataLoaded = true;
 
         } catch (IOException e) {
