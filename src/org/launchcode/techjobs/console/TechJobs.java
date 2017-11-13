@@ -116,7 +116,7 @@ public class TechJobs {
 
         if (someJobs.size() > 0) {
             for(HashMap<String, String> job : someJobs) {
-                System.out.println("***");
+                System.out.println("*****");
                 for(String key : job.keySet()) {
                     System.out.println(key + ": " + job.get(key));
                 }
